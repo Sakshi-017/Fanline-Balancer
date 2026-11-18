@@ -1,0 +1,388 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>FanLine Balancer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: navy control rail + tabbed workspace; mirrors the project deck (navy, gold, serif headings). */
+:root{
+  --bg:#f4f6f9; --panel:#ffffff; --ink:#1e2433; --muted:#5f6878; --line:#d9dee6; --tint:#eef1f6;
+  --navy:#1d2d50; --navy2:#34508a; --gold:#c9a04f; --goldt:#f6efdf; --teal:#2f7d74; --red:#a5413a;
+  --std:#1d2d50; --deco:#c9a04f; --bldc:#2f7d74; --onnavy:#ffffff;
+  --serif:"Source Serif 4",Cambria,Georgia,serif; --sans:"Inter","Segoe UI",Calibri,Arial,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1524; --panel:#172036; --ink:#e6eaf2; --muted:#9aa5b8; --line:#2b3754; --tint:#1d2842;
+  --navy:#8fb0ee; --navy2:#6f90d6; --gold:#e0bb6c; --goldt:#3a3220; --teal:#5fb3a8; --red:#e07a70;
+  --std:#8fb0ee; --deco:#e0bb6c; --bldc:#5fb3a8; --onnavy:#0f1524; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1524; --panel:#172036; --ink:#e6eaf2; --muted:#9aa5b8; --line:#2b3754; --tint:#1d2842;
+  --navy:#8fb0ee; --navy2:#6f90d6; --gold:#e0bb6c; --goldt:#3a3220; --teal:#5fb3a8; --red:#e07a70;
+  --std:#8fb0ee; --deco:#e0bb6c; --bldc:#5fb3a8; --onnavy:#0f1524; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13.5px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:1260px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);margin:2px 0 0;line-height:1.15;text-wrap:balance}
+.lede{color:var(--muted);margin:4px 0 0;max-width:68ch}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--navy)}
+.tab{font:inherit;font-weight:600;font-size:13px;padding:9px 16px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-radius:6px 6px 0 0}
+.tab[aria-selected="true"]{background:var(--navy);color:var(--onnavy)}
+.tab:hover:not([aria-selected="true"]){background:var(--tint);color:var(--ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grid{display:grid;grid-template-columns:290px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.grid>*{min-width:0}
+.rail{background:var(--navy);color:var(--onnavy);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.rail .eyebrow{color:var(--gold)}
+.rail label,.rail .lbl{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.rail .val{font-family:var(--mono);font-size:12.5px}
+.rail .row{display:flex;justify-content:space-between;align-items:baseline}
+.rail input[type=range]{width:100%;accent-color:var(--gold)}
+.rail select{font:inherit;width:100%;padding:7px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:var(--onnavy)}
+.rail select option{color:#1e2433}
+.rail .sep{border-top:1px solid rgba(255,255,255,.18)}
+.rail .note{font-size:11.5px;opacity:.75}
+.mixbar{display:flex;height:8px;border-radius:2px;overflow:hidden}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;cursor:pointer}
+.chk input{accent-color:var(--gold);margin-top:3px}
+.btn{font:inherit;font-weight:600;font-size:12.5px;padding:8px 12px;border-radius:3px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer}
+.btn:hover{background:var(--gold);color:var(--navy)}
+.btn.solid{background:var(--navy);color:var(--onnavy);border-color:var(--navy)}
+.btn.solid:hover{background:var(--navy2);border-color:var(--navy2);color:var(--onnavy)}
+.work{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px;min-width:0}
+h2{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);margin:0 0 4px}
+.sub{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{background:var(--tint);border-radius:4px;padding:12px 14px}
+.kpi .k{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--navy);line-height:1.15;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:11.5px;color:var(--muted)}
+.kpi.hero{background:var(--navy)}
+.kpi.hero .k{color:var(--gold)} .kpi.hero .v,.kpi.hero .s{color:var(--onnavy)}
+.answer{display:flex;gap:14px;align-items:center;background:var(--gold);color:#1d2d50;border-radius:4px;padding:12px 16px}
+.answer b{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
+.answer span{font-family:var(--serif);font-weight:700;font-size:15px}
+.stations{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.st{border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--panel)}
+.st .h{background:var(--navy);color:var(--onnavy);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 8px;display:flex;justify-content:space-between}
+.st .h em{font-style:normal;background:var(--gold);color:#1d2d50;border-radius:2px;padding:0 4px}
+.st .t{padding:8px;font-family:var(--mono);font-size:11.5px;min-height:62px;color:var(--navy);font-weight:600}
+.st .u{padding:0 8px 8px}
+.meter{height:6px;background:var(--tint);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--navy)}
+.st .pct{font-size:11.5px;font-weight:600;margin-top:4px;display:flex;justify-content:space-between;color:var(--muted)}
+.flag{font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:2px;color:#fff;display:inline-block;margin:0 8px 8px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{background:var(--navy);color:var(--onnavy);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:12px}
+tr.best td{background:var(--goldt);font-weight:600;color:var(--ink)}
+.two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+@media (max-width:1000px){.two{grid-template-columns:minmax(0,1fr)}}
+svg text{font-family:var(--sans);font-size:10.5px;fill:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.seqrow{display:flex;gap:3px;flex-wrap:wrap;margin:6px 0}
+.seqrow span{width:22px;height:22px;display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;border-radius:2px}
+.opts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.seg{display:inline-flex;border:1px solid var(--navy);border-radius:3px;overflow:hidden}
+.seg button{font:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border:0;background:transparent;color:var(--navy);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--navy);color:var(--onnavy)}
+input.txt{font:inherit;font-family:var(--mono);padding:6px 8px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink);min-width:0;width:180px}
+select.plain{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+.msg{font-size:12px;color:var(--red)}
+.note{font-size:12px;color:var(--muted)}
+td input{font:inherit;font-family:var(--mono);font-size:12px;width:56px;padding:3px 5px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink);text-align:right}
+td input.chg{border-color:var(--gold);background:var(--goldt)}
+.callout{background:var(--tint);border-radius:4px;padding:12px 14px;font-size:12.5px}
+.callout b{color:var(--navy)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+.rail .note{color:inherit;opacity:.75}
+.stations{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+.flag{font-size:9.5px;white-space:nowrap;margin:0 6px 8px}
+.two{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+@media (max-width:1000px){.two{grid-template-columns:minmax(0,1fr)}}
+#compare th,#compare td{padding:6px 6px}
+.st .h{font-size:9.5px;letter-spacing:.06em;padding:6px 6px}
+.st .pct{flex-direction:column;gap:0}
+.st .pct span+span{font-size:10.5px;font-weight:500}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">MSL304 Operations Management · Decision-support prototype</div>
+      <h1>FanLine Balancer</h1>
+      <p class="lede">Balance a mixed-model ceiling fan line (Standard, Decorative, BLDC), choose the launch sequence, and test growth. Every number recomputes as you change the inputs.</p>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-design" aria-selected="true">Line design</button>
+    <button class="tab" role="tab" id="t-seq" aria-selected="false">Sequencing</button>
+    <button class="tab" role="tab" id="t-growth" aria-selected="false">Growth</button>
+    <button class="tab" role="tab" id="t-data" aria-selected="false">Task data</button>
+  </div>
+
+  <div class="grid">
+    <aside class="rail" aria-label="Inputs">
+      <div class="eyebrow">Plant inputs</div>
+      <div><div class="row"><label for="demand">Daily demand</label><span class="val" id="demandV"></span></div><input type="range" id="demand" min="250" max="700" step="10" value="480"></div>
+      <div><div class="row"><label for="shift">Shift (min)</label><span class="val" id="shiftV"></span></div><input type="range" id="shift" min="420" max="600" step="30" value="480"></div>
+      <div><div class="row"><label for="brk">Breaks (min)</label><span class="val" id="brkV"></span></div><input type="range" id="brk" min="0" max="60" step="5" value="30"></div>
+      <div class="sep"></div>
+      <div class="lbl">Product mix</div>
+      <div><div class="row"><label for="mS">Standard</label><span class="val" id="mSV"></span></div><input type="range" id="mS" min="0" max="100" step="5" value="50"></div>
+      <div><div class="row"><label for="mD">Decorative</label><span class="val" id="mDV"></span></div><input type="range" id="mD" min="0" max="100" step="5" value="20"></div>
+      <div><div class="row"><label for="mB">BLDC</label><span class="val" id="mBV"></span></div><input type="range" id="mB" min="0" max="100" step="5" value="30"></div>
+      <div class="mixbar" id="mixbar" aria-hidden="true"></div>
+      <div class="sep"></div>
+      <div><div class="row"><label for="wf">Station window</label><span class="val" id="wfV"></span></div><input type="range" id="wf" min="1" max="1.5" step="0.05" value="1.2">
+        <div class="note">How far past the cycle time one fan may run before the worker reaches the end of the station.</div></div>
+      <div><label for="method">Method shown</label>
+        <select id="method"><option value="EXACT">Exact optimum (branch and bound)</option><option value="RPW">Ranked Positional Weight</option><option value="MFT">Most Following Tasks</option><option value="LTT">Longest Task Time</option><option value="ORDER">Naive: tasks in list order</option></select></div>
+      <label class="chk"><input type="checkbox" id="par"> <span>Allow parallel stations (two workers on alternate fans; exact method only)</span></label>
+      <button class="btn" id="reset" type="button">Reset to study case</button>
+    </aside>
+
+    <main class="work">
+      <!-- DESIGN -->
+      <section id="p-design" class="work">
+        <div class="kpis" id="kpis"></div>
+        <div class="answer" id="answer"></div>
+        <div class="panel">
+          <h2 id="lineTitle">The line, station by station</h2>
+          <p class="sub">Tasks at each station, how busy the worker is, and which models run over the cycle time.</p>
+          <div class="stations" id="stations"></div>
+        </div>
+        <div class="two">
+          <div class="panel">
+            <h2>Seconds per model at each station</h2>
+            <p class="sub">Dashed line: cycle time. Solid line: station window.</p>
+            <div class="scroll"><svg id="loadChart" role="img" aria-label="Station time per model" width="100%" viewBox="0 0 640 250"></svg></div>
+            <div class="legend"><span><i class="sw" style="background:var(--std)"></i>Standard</span><span><i class="sw" style="background:var(--deco)"></i>Decorative</span><span><i class="sw" style="background:var(--bldc)"></i>BLDC</span></div>
+          </div>
+          <div class="panel">
+            <h2>All methods compared</h2>
+            <p class="sub">Same cycle time and window for every method.</p>
+            <div class="scroll"><table id="compare"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEQUENCING -->
+      <section id="p-seq" class="work" hidden>
+        <div class="panel">
+          <h2>How the launch order loads each worker</h2>
+          <p class="sub">Each bar is one fan at the chosen station: where the worker starts and finishes inside the station. Red marks work beyond the window, which needs a helper.</p>
+          <div class="opts">
+            <div class="seg" role="group" aria-label="Schedule">
+              <button type="button" data-s="batch" aria-pressed="false">Daily batches</button>
+              <button type="button" data-s="level" aria-pressed="true">Level sequence</button>
+              <button type="button" data-s="custom" aria-pressed="false">Custom</button>
+            </div>
+            <input class="txt" id="custom" value="SSSDDBBBSS" aria-label="Custom 10-fan pattern using S, D, B">
+            <label class="note" for="stSel">Station</label><select class="plain" id="stSel"></select>
+          </div>
+          <div class="seqrow" id="seqShow"></div>
+          <div class="msg" id="seqMsg"></div>
+          <div class="scroll"><svg id="drift" role="img" aria-label="Worker drift by fan" width="100%" viewBox="0 0 900 260"></svg></div>
+          <div class="legend"><span><i class="sw" style="background:var(--navy)"></i>Work inside the station</span><span><i class="sw" style="background:var(--red)"></i>Beyond the window (helper)</span><span><i class="sw" style="background:var(--gold)"></i>Cycle time</span></div>
+        </div>
+        <div class="two">
+          <div class="panel"><h2>Helper work per day</h2><p class="sub">For the current line design and demand.</p><div class="scroll"><table id="seqTable"></table></div></div>
+          <div class="panel"><h2>Why it happens</h2><div class="callout" id="seqWhy"></div></div>
+        </div>
+      </section>
+
+      <!-- GROWTH -->
+      <section id="p-growth" class="work" hidden>
+        <div class="panel">
+          <h2>Workers needed as demand grows</h2>
+          <p class="sub">Re-solved at every demand level from 300 to 700 fans a day with the current mix, shift and task times. Gold marker: your current demand.</p>
+          <div class="scroll"><svg id="growth" role="img" aria-label="Workers needed against demand" width="100%" viewBox="0 0 900 300"></svg></div>
+          <div class="legend"><span><i class="sw" style="background:#9aa3b2"></i>Best heuristic (RPW)</span><span><i class="sw" style="background:var(--navy)"></i>Exact optimum</span><span><i class="sw" style="background:var(--gold)"></i>Exact + parallel stations</span></div>
+        </div>
+        <div class="kpis" id="growthK"></div>
+      </section>
+
+      <!-- DATA -->
+      <section id="p-data" class="work" hidden>
+        <div class="panel">
+          <h2>Task data</h2>
+          <p class="sub">Seconds per fan for each model. Enter your own time-study values; the line re-solves immediately. Edited cells are highlighted. A 0 means the model skips the task.</p>
+          <div class="opts"><button class="btn solid" id="resetTimes" type="button">Restore study times</button><span class="note" id="dataNote"></span></div>
+          <div class="scroll"><table id="taskTable"></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+const MODELS=["Standard","Decorative","BLDC"], MV=["--std","--deco","--bldc"], AB=["S","D","B"];
+const BASE=[
+ ["T1","Press shaft into stator core",[],[24,24,24]],["T2","Fit bearing in bottom cover",[],[16,16,16]],["T3","Fit bearing in top cover",[],[16,16,16]],
+ ["T4","Mount stator-shaft in bottom cover",["T1","T2"],[22,22,22]],["T5","Connect winding leads (BLDC: mount PCB driver)",["T4"],[28,28,48]],
+ ["T6","Close top cover, tighten screws",["T3","T4"],[30,30,30]],["T7","Motor no-load test",["T5","T6"],[32,32,38]],["T8","Clean and finish motor body",["T7"],[18,30,18]],
+ ["T9","Canopy and down-rod sub-assembly",[],[26,26,26]],["T10","Fit down-rod to motor",["T8","T9"],[20,20,20]],["T11","Fit three blade flanges",["T8"],[30,30,30]],
+ ["T12","Fit bottom cap / trim ring",["T11"],[12,26,12]],["T13","Fit LED light kit and wire it",["T12"],[0,44,0]],["T14","Connect supply wiring in canopy",["T10"],[22,22,12]],
+ ["T15","Pair remote, firmware check",["T14"],[0,0,30]],["T16","Full-speed run and wobble test",["T12","T13","T14","T15"],[38,42,40]],
+ ["T17","Rating label and QC inspection",["T16"],[18,18,22]],["T18","Pack fan kit in carton",["T17"],[34,38,36]]];
+let TIMES=BASE.map(t=>t[3].slice());
+const N=BASE.length, ID=BASE.map(t=>t[0]), PRED=BASE.map(t=>t[2].map(p=>ID.indexOf(p))), PM=PRED.map(ps=>ps.reduce((m,p)=>m|(1<<p),0));
+const SUCC=(()=>{const s=ID.map(()=>new Set());for(let i=N-1;i>=0;i--)for(let j=0;j<N;j++)if(PRED[j].includes(i)){s[i].add(j);s[j].forEach(k=>s[i].add(k));}return s;})();
+const $=id=>document.getElementById(id), fmt=(x,d=1)=>Number(x).toFixed(d), css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function mk(demand,o={}){
+  const raw=[+$("mS").value,+$("mD").value,+$("mB").value], tot=raw.reduce((a,b)=>a+b,0)||1, mix=raw.map(v=>v/tot);
+  const avail=($("shift").value-$("brk").value)*60, C=avail/demand, W=C*+$("wf").value;
+  return {mix,avail,demand,C,W,tb:TIMES.map(t=>t.reduce((a,v,k)=>a+v*mix[k],0))};
+}
+const ld=(P,st)=>st.reduce((a,i)=>a+P.tb[i],0), ml=(st,k)=>st.reduce((a,i)=>a+TIMES[i][k],0);
+function fits(P,st,i,k=1){if(ld(P,st)+P.tb[i]>P.C*k+1e-9)return false;for(let m=0;m<3;m++)if(ml(st,m)+TIMES[i][m]>P.W*k+1e-9)return false;return true;}
+function heuristic(P,rule){
+  const pri={LTT:i=>[P.tb[i],SUCC[i].size],MFT:i=>[SUCC[i].size,P.tb[i]],RPW:i=>[P.tb[i]+[...SUCC[i]].reduce((a,j)=>a+P.tb[j],0),P.tb[i]]}[rule];
+  const done=new Set(),out=[];let cur=[];
+  while(done.size<N){const av=[...Array(N).keys()].filter(i=>!done.has(i)&&PRED[i].every(p=>done.has(p)));let c;
+    if(rule==="ORDER")c=fits(P,cur,av[0])?[av[0]]:[];else c=av.filter(i=>fits(P,cur,i)).sort((a,b)=>{const x=pri(a),y=pri(b);return y[0]-x[0]||y[1]-x[1]});
+    if(c.length){cur.push(c[0]);done.add(c[0]);}else{if(!cur.length)return null;out.push(cur);cur=[];}}
+  if(cur.length)out.push(cur);return out.map(st=>({tasks:st,k:1}));
+}
+// Exact: DP over precedence-feasible task sets; a station is a maximal load for 1 worker (cap C) or, with parallel stations, 2 workers (cap 2C).
+function exact(P,allowPar){
+  const FULL=(1<<N)-1, memo=new Map(), lmemo=new Map(), ks=allowPar?[1,2]:[1];
+  for(let i=0;i<N;i++){const k=allowPar?2:1;if(P.tb[i]>P.C*k+1e-9)return null;for(let m=0;m<3;m++)if(TIMES[i][m]>P.W*k+1e-9)return null;}
+  function loads(mask,k){const key=mask*4+k;if(lmemo.has(key))return lmemo.get(key);const res=[];
+    (function rec(start,cur,set,w,mm){let any=false;
+      for(let i=0;i<N;i++){if(set&(1<<i))continue;if((PM[i]&set)!==PM[i])continue;if(w+P.tb[i]>P.C*k+1e-9)continue;
+        if(mm[0]+TIMES[i][0]>P.W*k+1e-9||mm[1]+TIMES[i][1]>P.W*k+1e-9||mm[2]+TIMES[i][2]>P.W*k+1e-9)continue;any=true;if(i<start)continue;
+        rec(i+1,cur|(1<<i),set|(1<<i),w+P.tb[i],[mm[0]+TIMES[i][0],mm[1]+TIMES[i][1],mm[2]+TIMES[i][2]]);}
+      if(!any&&cur)res.push(cur);})(0,0,mask,0,[0,0,0]);
+    lmemo.set(key,res);return res;}
+  function f(mask){if(mask===FULL)return [0,0];if(memo.has(mask))return memo.get(mask).v;let best=[Infinity,Infinity],arg=null;
+    for(const k of ks)for(const L of loads(mask,k)){const r=f(mask|L),v=[k+r[0],(k-1)+r[1]];if(v[0]<best[0]||(v[0]===best[0]&&v[1]<best[1])){best=v;arg=[L,k];}}
+    memo.set(mask,{v:best,arg});return best;}
+  if(!isFinite(f(0)[0]))return null;const out=[];let m=0;
+  while(m!==FULL){const [L,k]=memo.get(m).arg;out.push({tasks:[...Array(N).keys()].filter(i=>L&(1<<i)),k});m|=L;}
+  return out;
+}
+function measures(P,line){const T=P.tb.reduce((a,b)=>a+b,0),w=line.reduce((a,s)=>a+s.k,0),L=line.map(s=>ld(P,s.tasks)/s.k),mx=Math.max(...L);
+  return {workers:w,stations:line.length,eff:T/(w*P.C),idle:w*P.C-T,smooth:Math.sqrt(L.reduce((a,l)=>a+(mx-l)**2,0)),T,out:Math.floor(P.avail/Math.max(...line.map(s=>ld(P,s.tasks)/s.k)))};}
+function levelSeq(mix){const need=mix.map(m=>Math.round(m*10));let s=need.reduce((a,b)=>a+b,0);
+  while(s>10){need[need.indexOf(Math.max(...need))]--;s--;}while(s<10){need[mix.indexOf(Math.max(...mix))]++;s++;}
+  const cnt=[0,0,0],seq=[];for(let k=1;k<=10;k++){let b=-1,bv=-Infinity;for(let m=0;m<3;m++){if(cnt[m]>=need[m])continue;const v=k*need[m]/10-cnt[m];if(v>bv){bv=v;b=m;}}if(b<0)break;seq.push(b);cnt[b]++;}return seq;}
+function drift(P,st,seq){const tm=[0,1,2].map(m=>ml(st.tasks,m)/st.k);let start=0,u=0;const tr=[];
+  for(const m of seq){let fin=start+tm[m],x=0;if(fin>P.W){x=fin-P.W;u+=x;}tr.push({m,start,fin,x});start=Math.max(0,Math.min(fin,P.W)-P.C);}return {u,tr};}
+
+const state={tab:"design",sched:"level",station:null};
+let cache={};
+function solveAll(P){const par=$("par").checked,sols={};["EXACT","RPW","MFT","LTT","ORDER"].forEach(r=>sols[r]=r==="EXACT"?exact(P,false):heuristic(P,r));sols.PAR=par?exact(P,true):null;return sols;}
+function current(){const P=mk(+$("demand").value),sols=solveAll(P);const m=$("method").value;let line=sols[m];if(m==="EXACT"&&$("par").checked&&sols.PAR)line=sols.PAR;return {P,sols,line,m};}
+
+function renderRail(P){$("demandV").textContent=P.demand+" fans";$("shiftV").textContent=$("shift").value;$("brkV").textContent=$("brk").value;
+  ["mS","mD","mB"].forEach((id,k)=>$(id+"V").textContent=Math.round(P.mix[k]*100)+"%");$("wfV").textContent="× "+fmt(+$("wf").value,2);
+  $("mixbar").innerHTML=MV.map((v,i)=>`<div style="width:${P.mix[i]*100}%;background:var(${v})"></div>`).join("");}
+
+const NAMES={EXACT:"Exact optimum",PAR:"Exact + parallel stations",RPW:"Ranked Positional Weight",MFT:"Most Following Tasks",LTT:"Longest Task Time",ORDER:"Naive (task order)"};
+function renderDesign(c){const {P,sols,line,m}=c;
+  if(!line){$("kpis").innerHTML=`<div class="kpi"><div class="k">Cycle time</div><div class="v">${fmt(P.C,2)} s</div></div>`;$("answer").innerHTML=`<b>No feasible line</b><span>A task is longer than the cycle time or window. Lower demand, lengthen the shift, or allow parallel stations.</span>`;
+    ["stations","compare"].forEach(id=>$(id).innerHTML="");$("loadChart").innerHTML="";return;}
+  const M=measures(P,line),nmin=Math.ceil(M.T/P.C-1e-9),ex=sols.EXACT,rp=sols.RPW;
+  const nm=(m==="EXACT"&&$("par").checked)?"PAR":m;
+  $("kpis").innerHTML=[["Cycle time",fmt(P.C,2)+" s",`${P.avail/60} min ÷ ${P.demand} fans`],["Workers",M.workers,`${M.stations} stations · minimum ${nmin}`,1],["Efficiency",fmt(M.eff*100)+"%","balance delay "+fmt((1-M.eff)*100)+"%"],["Idle per cycle",fmt(M.idle)+" s","across all workers"],["Smoothness",fmt(M.smooth),"lower is smoother"],["Capacity",M.out+"/day","at this design"]]
+    .map(k=>`<div class="kpi${k[3]?" hero":""}"><div class="k">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join("");
+  const saved=rp?measures(P,rp).workers-M.workers:0;
+  $("answer").innerHTML=`<b>Answer</b><span>${NAMES[nm]}: ${M.workers} workers at ${fmt(M.eff*100)}% efficiency${saved>0&&nm!=="RPW"?` · ${saved} fewer than the best heuristic (≈ ₹${(saved*2.44).toFixed(1)} lakh a year per shift)`:""}</span>`;
+  $("lineTitle").textContent=`The line, station by station · ${NAMES[nm]}`;
+  $("stations").innerHTML=line.map((s,j)=>{const u=ld(P,s.tasks)/(P.C*s.k),ov=[0,1,2].filter(k=>ml(s.tasks,k)>P.C*s.k+1e-9);
+    return `<div class="st"><div class="h"><span>STATION ${j+1}</span>${s.k>1?"<em>×2</em>":""}</div><div class="t">${s.tasks.map(i=>`<span title="${BASE[i][1]}">${ID[i]}</span>`).join(" ")}</div>
+    <div class="u"><div class="meter"><i style="width:${Math.min(100,u*100)}%;background:${u>=.8?"var(--navy)":"var(--navy2)"};opacity:${u>=.8?1:.55}"></i></div><div class="pct"><span>${Math.round(u*100)}%</span><span>${fmt(ld(P,s.tasks))} s</span></div></div>
+    ${ov.map(k=>`<span class="flag" style="background:var(${MV[k]})">${["Std","Deco","BLDC"][k]} ${ml(s.tasks,k)/s.k|0} s</span>`).join("")}</div>`;}).join("");
+  drawLoads(P,line);
+  const rows=["EXACT",...($("par").checked?["PAR"]:[]),"RPW","MFT","LTT","ORDER"],best=Math.min(...rows.filter(r=>sols[r]).map(r=>measures(P,sols[r]).workers));
+  $("compare").innerHTML=`<tr><th>Method</th><th class="n">Workers</th><th class="n">Eff.</th><th class="n">SI</th></tr>`+rows.map(r=>{const s=sols[r];if(!s)return `<tr><td>${NAMES[r]}</td><td class="n" colspan="3">infeasible</td></tr>`;const q=measures(P,s);
+    return `<tr class="${q.workers===best?"best":""}"><td>${NAMES[r]}</td><td class="n">${q.workers}</td><td class="n">${fmt(q.eff*100)}%</td><td class="n">${fmt(q.smooth)}</td></tr>`;}).join("");
+}
+function drawLoads(P,line){const w=640,h=250,l=34,r=10,t=10,b=26,ymax=Math.max(P.W*1.12,...line.map(s=>Math.max(...[0,1,2].map(k=>ml(s.tasks,k)/s.k))))*1.03;
+  const n=line.length,band=(w-l-r)/n,bw=Math.min(16,band*.26),Y=v=>t+(h-t-b)*(1-v/ymax);let g="";const step=ymax>110?40:20;
+  for(let v=0;v<=ymax;v+=step)g+=`<line x1="${l}" x2="${w-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width=".6"/><text x="${l-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
+  line.forEach((s,j)=>{const cx=l+band*(j+.5);[0,1,2].forEach(k=>{const v=ml(s.tasks,k)/s.k;g+=`<rect x="${cx+(k-1.5)*bw}" y="${Y(v)}" width="${bw-2}" height="${Y(0)-Y(v)}" fill="var(${MV[k]})"><title>Station ${j+1} · ${MODELS[k]}: ${fmt(v)} s</title></rect>`});g+=`<text x="${cx}" y="${h-8}" text-anchor="middle">S${j+1}</text>`;});
+  g+=`<line x1="${l}" x2="${w-r}" y1="${Y(P.C)}" y2="${Y(P.C)}" stroke="var(--ink)" stroke-dasharray="5 4"/><line x1="${l}" x2="${w-r}" y1="${Y(P.W)}" y2="${Y(P.W)}" stroke="var(--red)"/>`;
+  g+=`<text x="${w-r}" y="${Y(P.C)-4}" text-anchor="end" style="fill:var(--ink)">C ${fmt(P.C,1)} s</text><text x="${w-r}" y="${Y(P.W)-4}" text-anchor="end" style="fill:var(--red)">window ${fmt(P.W,1)} s</text>`;
+  $("loadChart").innerHTML=g;}
+
+function schedule(P,kind){if(kind==="level")return {pat:levelSeq(P.mix),reps:Math.round(P.demand/10)};
+  if(kind==="custom"){const s=$("custom").value.toUpperCase().replace(/[^SDB]/g,"").split("").map(c=>AB.indexOf(c));return {pat:s,reps:s.length?Math.round(P.demand/s.length):0};}
+  const units=[0,1,2].map(k=>Math.round(P.mix[k]*P.demand));return {pat:[].concat(...units.map((u,k)=>Array(u).fill(k))),reps:1};}
+function renderSeq(c){const {P,line}=c;if(!line){$("drift").innerHTML="";return;}
+  const sel=$("stSel");const opts=line.map((s,j)=>`<option value="${j}">Station ${j+1} (${s.tasks.map(i=>ID[i]).join(", ")})</option>`).join("");
+  const batch=schedule(P,"batch"),bfull=batch.pat;
+  if(sel.dataset.sig!==opts){sel.innerHTML=opts;sel.dataset.sig=opts;let worst=0,wu=-1;line.forEach((s,j)=>{const u=drift(P,s,bfull).u;if(u>wu){wu=u;worst=j;}});sel.value=worst;}
+  const sj=+sel.value||0,st=line[sj];
+  const sc=schedule(P,state.sched);$("seqMsg").textContent=state.sched==="custom"&&!sc.pat.length?"Type a pattern using S, D and B.":"";
+  const show=state.sched==="batch"?[0,0,0,0,1,1,1,2,2,2]:sc.pat;
+  $("seqShow").innerHTML=show.map(k=>`<span style="background:var(${MV[k]})">${AB[k]}</span>`).join("")+(state.sched==="batch"?`<span style="background:transparent;color:var(--muted);width:auto;padding:0 6px">…all Standard, then Decorative, then BLDC</span>`:`<span style="background:transparent;color:var(--muted);width:auto;padding:0 6px">× ${sc.reps} a day</span>`);
+  const full=state.sched==="batch"?bfull:[].concat(...Array(sc.reps).fill(sc.pat));
+  let slice;if(state.sched==="batch"){const u0=[0,1,2].map(k=>Math.round(P.mix[k]*P.demand));const firstHeavy=Math.max(0,u0[0]-8);slice=full.slice(firstHeavy,firstHeavy+40);}else slice=full.slice(0,40);
+  const d=drift(P,st,slice);drawDrift(P,d.tr);
+  const rows=[["Daily batches",bfull],["Level sequence",[].concat(...Array(Math.round(P.demand/10)).fill(levelSeq(P.mix)))]];
+  const cs=schedule(P,"custom");if(cs.pat.length)rows.push([`Custom (${cs.pat.map(k=>AB[k]).join("")})`,[].concat(...Array(cs.reps).fill(cs.pat))]);
+  $("seqTable").innerHTML=`<tr><th>Schedule</th><th class="n">Helper min/day</th><th>Stations hit</th></tr>`+rows.map(([n,s])=>{const per=line.map(x=>drift(P,x,s).u),tot=per.reduce((a,b)=>a+b,0);
+    return `<tr class="${tot<0.5?"best":""}"><td>${n}</td><td class="n">${fmt(tot/60)}</td><td>${per.map((v,i)=>v>.5?"S"+(i+1):null).filter(Boolean).join(", ")||"none"}</td></tr>`;}).join("");
+  const tm=[0,1,2].map(k=>ml(st.tasks,k)/st.k),heavy=tm.indexOf(Math.max(...tm));
+  $("seqWhy").innerHTML=`At <b>station ${sj+1}</b> a ${MODELS[heavy]} fan takes <b>${fmt(tm[heavy])} s</b> against a <b>${fmt(P.C,2)} s</b> cycle. Each heavy fan in a row pushes the worker ${fmt(Math.max(0,tm[heavy]-P.C))} s further down the conveyor; after the ${fmt(P.W,1)} s window the rest needs a helper. A level sequence follows each heavy fan with a lighter one so the worker can recover.`;
+}
+function drawDrift(P,tr){const w=900,h=260,l=40,r=10,t=14,b=26,n=tr.length,ymax=P.W*1.35,bw=(w-l-r)/Math.max(n,1),Y=v=>t+(h-t-b)*(1-v/ymax);let g="";
+  for(let v=0;v<=ymax;v+=20)g+=`<line x1="${l}" x2="${w-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width=".6"/><text x="${l-6}" y="${Y(v)+4}" text-anchor="end">${v}s</text>`;
+  tr.forEach((f,i)=>{const x=l+i*bw+bw*.15,ww=bw*.7,top=Math.min(f.fin,P.W);g+=`<rect x="${x}" y="${Y(top)}" width="${ww}" height="${Y(f.start)-Y(top)}" fill="var(${MV[f.m]})"><title>Fan ${i+1} (${MODELS[f.m]}): ${fmt(f.start)}–${fmt(f.fin)} s</title></rect>`;
+    if(f.x>0)g+=`<rect x="${x}" y="${Y(f.fin)}" width="${ww}" height="${Y(P.W)-Y(f.fin)}" fill="var(--red)"/>`;});
+  g+=`<line x1="${l}" x2="${w-r}" y1="${Y(P.C)}" y2="${Y(P.C)}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="6 4"/><line x1="${l}" x2="${w-r}" y1="${Y(P.W)}" y2="${Y(P.W)}" stroke="var(--red)" stroke-width="1.2"/>`;
+  g+=`<text x="${l+4}" y="${t+10}" style="fill:var(--red)">red line: end of station (${fmt(P.W,1)} s)</text><text x="${l+4}" y="${h-8}">fan →</text>`;
+  $("drift").innerHTML=g;}
+
+let gtimer=null;
+function renderGrowth(){const out=$("growth");const pts=[];for(let d=300;d<=700;d+=20){const P=mk(d);const r=heuristic(P,"RPW"),e=exact(P,false),p=exact(P,true);
+    pts.push({d,r:r?r.length:null,e:e?e.length:null,p:p?p.reduce((a,s)=>a+s.k,0):null});}
+  const w=900,h=300,l=44,r=14,t=14,b=34,ys=pts.flatMap(p=>[p.r,p.e,p.p]).filter(v=>v!=null),ymin=Math.min(...ys)-1,ymax=Math.max(...ys)+1;
+  const X=d=>l+(d-300)/400*(w-l-r),Y=v=>t+(h-t-b)*(1-(v-ymin)/(ymax-ymin));let g="";
+  for(let v=Math.ceil(ymin);v<=ymax;v++)g+=`<line x1="${l}" x2="${w-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width=".6"/><text x="${l-8}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
+  for(let d=300;d<=700;d+=50)g+=`<text x="${X(d)}" y="${h-12}" text-anchor="middle">${d}</text>`;
+  const path=k=>{let s="",prev=null;pts.forEach(p=>{if(p[k]==null){prev=null;return;}s+=(prev==null?`M${X(p.d)},${Y(p[k])}`:`H${X(p.d)}V${Y(p[k])}`);prev=p[k];});return s;};
+  g+=`<path d="${path("r")}" fill="none" stroke="#9aa3b2" stroke-width="2"/><path d="${path("e")}" fill="none" stroke="var(--navy)" stroke-width="2.4"/><path d="${path("p")}" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="6 4"/>`;
+  const cd=+$("demand").value;g+=`<line x1="${X(cd)}" x2="${X(cd)}" y1="${t}" y2="${h-b}" stroke="var(--gold)" stroke-width="1"/><circle cx="${X(cd)}" cy="${t+4}" r="4" fill="var(--gold)"/><text x="${X(cd)+6}" y="${t+8}" style="fill:var(--ink)">${cd}/day</text>`;
+  g+=`<text x="${(w)/2}" y="${h-1}" text-anchor="middle">fans per day</text>`;out.innerHTML=g;
+  let jump=null;for(let i=1;i<pts.length;i++)if(pts[i].e!=null&&pts[i-1].e!=null&&pts[i].e-pts[i-1].e>=2){jump=pts[i];break;}
+  const here=pts.reduce((a,p)=>Math.abs(p.d-cd)<Math.abs(a.d-cd)?p:a,pts[0]);
+  const saveIP=pts.filter(p=>p.r!=null&&p.e!=null&&p.r>p.e).length;
+  $("growthK").innerHTML=[["At "+here.d+"/day",`${here.e??"–"} / ${here.p??"–"}`,"workers: exact / with parallel"],["Biggest jump",jump?`${jump.d}/day`:"none","where the exact line jumps by 2+ workers"],["Optimiser saves","at "+saveIP+" of "+pts.length,"demand levels vs best heuristic"],["Max demand tested",pts.filter(p=>p.e!=null).slice(-1)[0]?.d+"/day","feasible without parallel stations"]]
+    .map((k,i)=>`<div class="kpi${i===0?" hero":""}"><div class="k">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join("");
+}
+function renderData(){const tb=$("taskTable");if(!tb.dataset.built){tb.innerHTML=`<tr><th>Task</th><th>Description</th><th>Predecessors</th><th class="n">Standard</th><th class="n">Decorative</th><th class="n">BLDC</th></tr>`+
+    BASE.map((t,i)=>`<tr><td>${t[0]}</td><td style="white-space:normal;min-width:200px">${t[1]}</td><td>${t[2].join(", ")||"–"}</td>${[0,1,2].map(k=>`<td class="n"><input type="number" min="0" max="200" step="1" id="tt-${i}-${k}" data-i="${i}" data-k="${k}" value="${TIMES[i][k]}" aria-label="${t[0]} ${MODELS[k]} seconds"></td>`).join("")}</tr>`).join("");tb.dataset.built=1;
+    tb.addEventListener("input",e=>{const el=e.target;if(!el.dataset.i)return;const v=Math.max(0,Math.min(200,+el.value||0));TIMES[+el.dataset.i][+el.dataset.k]=v;el.classList.toggle("chg",v!==BASE[+el.dataset.i][3][+el.dataset.k]);cacheBust();});}
+const n=TIMES.reduce((a,t,i)=>a+t.filter((v,k)=>v!==BASE[i][3][k]).length,0);
+  $("dataNote").textContent=n?`${n} value${n>1?"s":""} changed from the study data.`:"Showing the study data (engineering estimates).";}
+
+function cacheBust(){render();}
+function render(){const c=current();renderRail(c.P);
+  if(state.tab==="design")renderDesign(c);if(state.tab==="seq")renderSeq(c);if(state.tab==="data"){renderData();const M=c.line?measures(c.P,c.line):null;$("dataNote").textContent+=M?`  Current line: ${M.workers} workers, ${fmt(M.eff*100)}% efficiency.`:"  No feasible line with these times.";}
+  if(state.tab==="growth"){clearTimeout(gtimer);gtimer=setTimeout(renderGrowth,120);}}
+const TABS={design:"p-design",seq:"p-seq",growth:"p-growth",data:"p-data"};
+Object.keys(TABS).forEach(k=>$("t-"+k).addEventListener("click",()=>{state.tab=k;Object.entries(TABS).forEach(([kk,id])=>{$(id).hidden=kk!==k;$("t-"+kk).setAttribute("aria-selected",kk===k);});
+  render();}));
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{state.sched=b.dataset.s;document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();}));
+["demand","shift","brk","mS","mD","mB","wf","method","par","custom","stSel"].forEach(id=>$(id).addEventListener("input",render));
+const DEF={demand:480,shift:480,brk:30,mS:50,mD:20,mB:30,wf:1.2,method:"EXACT"};
+$("reset").addEventListener("click",()=>{for(const k in DEF)$(k).value=DEF[k];$("par").checked=false;render();});
+$("resetTimes").addEventListener("click",()=>{TIMES=BASE.map(t=>t[3].slice());document.querySelectorAll("#taskTable input").forEach(el=>{el.value=TIMES[+el.dataset.i][+el.dataset.k];el.classList.remove("chg");});render();});
+render();
+</script>
+
+</body></html>

@@ -1,0 +1,1687 @@
+{
+ "base": {
+  "demand": 480,
+  "available_s": 27000,
+  "cycle_time": 56.25,
+  "window": 67.5,
+  "mix": {
+   "Standard": 0.5,
+   "Decorative": 0.2,
+   "BLDC": 0.3
+  },
+  "total_work_weighted": 417.8,
+  "total_work_model": {
+   "Standard": 386,
+   "Decorative": 464,
+   "BLDC": 440
+  },
+  "n_min": 8,
+  "daily_units": {
+   "Standard": 240,
+   "Decorative": 96,
+   "BLDC": 144
+  }
+ },
+ "tasks": [
+  {
+   "id": "T1",
+   "desc": "Press shaft into stator core",
+   "preds": [],
+   "Standard": 24,
+   "Decorative": 24,
+   "BLDC": 24,
+   "weighted": 24.0,
+   "followers": 14,
+   "rpw": 359.8
+  },
+  {
+   "id": "T2",
+   "desc": "Fit bearing in bottom cover",
+   "preds": [],
+   "Standard": 16,
+   "Decorative": 16,
+   "BLDC": 16,
+   "weighted": 16.0,
+   "followers": 14,
+   "rpw": 351.8
+  },
+  {
+   "id": "T3",
+   "desc": "Fit bearing in top cover",
+   "preds": [],
+   "Standard": 16,
+   "Decorative": 16,
+   "BLDC": 16,
+   "weighted": 16.0,
+   "followers": 12,
+   "rpw": 295.8
+  },
+  {
+   "id": "T4",
+   "desc": "Mount stator-shaft in bottom cover",
+   "preds": [
+    "T1",
+    "T2"
+   ],
+   "Standard": 22,
+   "Decorative": 22,
+   "BLDC": 22,
+   "weighted": 22.0,
+   "followers": 13,
+   "rpw": 335.8
+  },
+  {
+   "id": "T5",
+   "desc": "Connect winding leads (BLDC: mount PCB driver)",
+   "preds": [
+    "T4"
+   ],
+   "Standard": 28,
+   "Decorative": 28,
+   "BLDC": 48,
+   "weighted": 34.0,
+   "followers": 11,
+   "rpw": 283.8
+  },
+  {
+   "id": "T6",
+   "desc": "Close top cover, tighten screws",
+   "preds": [
+    "T3",
+    "T4"
+   ],
+   "Standard": 30,
+   "Decorative": 30,
+   "BLDC": 30,
+   "weighted": 30.0,
+   "followers": 11,
+   "rpw": 279.8
+  },
+  {
+   "id": "T7",
+   "desc": "Motor no-load test",
+   "preds": [
+    "T5",
+    "T6"
+   ],
+   "Standard": 32,
+   "Decorative": 32,
+   "BLDC": 38,
+   "weighted": 33.8,
+   "followers": 10,
+   "rpw": 249.8
+  },
+  {
+   "id": "T8",
+   "desc": "Clean and finish motor body",
+   "preds": [
+    "T7"
+   ],
+   "Standard": 18,
+   "Decorative": 30,
+   "BLDC": 18,
+   "weighted": 20.4,
+   "followers": 9,
+   "rpw": 216.0
+  },
+  {
+   "id": "T9",
+   "desc": "Canopy and down-rod sub-assembly",
+   "preds": [],
+   "Standard": 26,
+   "Decorative": 26,
+   "BLDC": 26,
+   "weighted": 26.0,
+   "followers": 6,
+   "rpw": 168.0
+  },
+  {
+   "id": "T10",
+   "desc": "Fit down-rod to motor",
+   "preds": [
+    "T8",
+    "T9"
+   ],
+   "Standard": 20,
+   "Decorative": 20,
+   "BLDC": 20,
+   "weighted": 20.0,
+   "followers": 5,
+   "rpw": 142.0
+  },
+  {
+   "id": "T11",
+   "desc": "Fit three blade flanges",
+   "preds": [
+    "T8"
+   ],
+   "Standard": 30,
+   "Decorative": 30,
+   "BLDC": 30,
+   "weighted": 30.0,
+   "followers": 5,
+   "rpw": 147.6
+  },
+  {
+   "id": "T12",
+   "desc": "Fit bottom cap / trim ring",
+   "preds": [
+    "T11"
+   ],
+   "Standard": 12,
+   "Decorative": 26,
+   "BLDC": 12,
+   "weighted": 14.8,
+   "followers": 4,
+   "rpw": 117.6
+  },
+  {
+   "id": "T13",
+   "desc": "Fit LED light kit and wire it",
+   "preds": [
+    "T12"
+   ],
+   "Standard": 0,
+   "Decorative": 44,
+   "BLDC": 0,
+   "weighted": 8.8,
+   "followers": 3,
+   "rpw": 102.8
+  },
+  {
+   "id": "T14",
+   "desc": "Connect supply wiring in canopy",
+   "preds": [
+    "T10"
+   ],
+   "Standard": 22,
+   "Decorative": 22,
+   "BLDC": 12,
+   "weighted": 19.0,
+   "followers": 4,
+   "rpw": 122.0
+  },
+  {
+   "id": "T15",
+   "desc": "Pair remote, firmware check",
+   "preds": [
+    "T14"
+   ],
+   "Standard": 0,
+   "Decorative": 0,
+   "BLDC": 30,
+   "weighted": 9.0,
+   "followers": 3,
+   "rpw": 103.0
+  },
+  {
+   "id": "T16",
+   "desc": "Full-speed run and wobble test",
+   "preds": [
+    "T12",
+    "T13",
+    "T14",
+    "T15"
+   ],
+   "Standard": 38,
+   "Decorative": 42,
+   "BLDC": 40,
+   "weighted": 39.4,
+   "followers": 2,
+   "rpw": 94.0
+  },
+  {
+   "id": "T17",
+   "desc": "Rating label and QC inspection",
+   "preds": [
+    "T16"
+   ],
+   "Standard": 18,
+   "Decorative": 18,
+   "BLDC": 22,
+   "weighted": 19.2,
+   "followers": 1,
+   "rpw": 54.6
+  },
+  {
+   "id": "T18",
+   "desc": "Pack fan kit in carton",
+   "preds": [
+    "T17"
+   ],
+   "Standard": 34,
+   "Decorative": 38,
+   "BLDC": 36,
+   "weighted": 35.4,
+   "followers": 0,
+   "rpw": 35.4
+  }
+ ],
+ "ip_status": "Optimal",
+ "minmax_status": "Optimal",
+ "minmax_L": 56.0,
+ "solutions": {
+  "ORDER": {
+   "stations": 10,
+   "workers": 10,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 144.7,
+   "efficiency": 0.7428,
+   "balance_delay": 0.2572,
+   "smoothness": 56.4875,
+   "max_load": 56.0,
+   "output_per_day": 482.1429,
+   "loads": [
+    56.0,
+    22.0,
+    34.0,
+    30.0,
+    54.2,
+    46.0,
+    44.8,
+    36.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T6"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T10"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T13",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     56,
+     22,
+     28,
+     30,
+     50,
+     46,
+     42,
+     22,
+     38,
+     52
+    ],
+    "Decorative": [
+     56,
+     22,
+     28,
+     30,
+     62,
+     46,
+     56,
+     66,
+     42,
+     56
+    ],
+    "BLDC": [
+     56,
+     22,
+     48,
+     30,
+     56,
+     46,
+     42,
+     42,
+     40,
+     58
+    ]
+   }
+  },
+  "LTT": {
+   "stations": 10,
+   "workers": 10,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 144.7,
+   "efficiency": 0.7428,
+   "balance_delay": 0.2572,
+   "smoothness": 59.5003,
+   "max_load": 54.6,
+   "output_per_day": 494.5055,
+   "loads": [
+    50.0,
+    54.0,
+    34.0,
+    30.0,
+    54.2,
+    50.0,
+    42.8,
+    8.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T9",
+     "T1"
+    ],
+    [
+     "T2",
+     "T4",
+     "T3"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T6"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T11",
+     "T10"
+    ],
+    [
+     "T14",
+     "T12",
+     "T15"
+    ],
+    [
+     "T13"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     50,
+     54,
+     28,
+     30,
+     50,
+     50,
+     34,
+     0,
+     38,
+     52
+    ],
+    "Decorative": [
+     50,
+     54,
+     28,
+     30,
+     62,
+     50,
+     48,
+     44,
+     42,
+     56
+    ],
+    "BLDC": [
+     50,
+     54,
+     48,
+     30,
+     56,
+     50,
+     54,
+     0,
+     40,
+     58
+    ]
+   }
+  },
+  "MFT": {
+   "stations": 10,
+   "workers": 10,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 144.7,
+   "efficiency": 0.7428,
+   "balance_delay": 0.2572,
+   "smoothness": 69.0655,
+   "max_load": 56.0,
+   "output_per_day": 482.1429,
+   "loads": [
+    56.0,
+    52.0,
+    34.0,
+    54.2,
+    56.0,
+    48.0,
+    14.8,
+    8.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T11"
+    ],
+    [
+     "T10",
+     "T14",
+     "T15"
+    ],
+    [
+     "T12"
+    ],
+    [
+     "T13"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     56,
+     52,
+     28,
+     50,
+     56,
+     42,
+     12,
+     0,
+     38,
+     52
+    ],
+    "Decorative": [
+     56,
+     52,
+     28,
+     62,
+     56,
+     42,
+     26,
+     44,
+     42,
+     56
+    ],
+    "BLDC": [
+     56,
+     52,
+     48,
+     56,
+     56,
+     62,
+     12,
+     0,
+     40,
+     58
+    ]
+   }
+  },
+  "RPW": {
+   "stations": 10,
+   "workers": 10,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 144.7,
+   "efficiency": 0.7428,
+   "balance_delay": 0.2572,
+   "smoothness": 69.0655,
+   "max_load": 56.0,
+   "output_per_day": 482.1429,
+   "loads": [
+    56.0,
+    52.0,
+    34.0,
+    54.2,
+    56.0,
+    48.0,
+    14.8,
+    8.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T11"
+    ],
+    [
+     "T10",
+     "T14",
+     "T15"
+    ],
+    [
+     "T12"
+    ],
+    [
+     "T13"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     56,
+     52,
+     28,
+     50,
+     56,
+     42,
+     12,
+     0,
+     38,
+     52
+    ],
+    "Decorative": [
+     56,
+     52,
+     28,
+     62,
+     56,
+     42,
+     26,
+     44,
+     42,
+     56
+    ],
+    "BLDC": [
+     56,
+     52,
+     48,
+     56,
+     56,
+     62,
+     12,
+     0,
+     40,
+     58
+    ]
+   }
+  },
+  "IP": {
+   "stations": 9,
+   "workers": 9,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 88.45,
+   "efficiency": 0.8253,
+   "balance_delay": 0.1747,
+   "smoothness": 39.9855,
+   "max_load": 56.0,
+   "output_per_day": 482.1429,
+   "loads": [
+    56.0,
+    52.0,
+    34.0,
+    54.2,
+    56.0,
+    34.8,
+    36.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T11"
+    ],
+    [
+     "T10",
+     "T12"
+    ],
+    [
+     "T13",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     56,
+     52,
+     28,
+     50,
+     56,
+     32,
+     22,
+     38,
+     52
+    ],
+    "Decorative": [
+     56,
+     52,
+     28,
+     62,
+     56,
+     46,
+     66,
+     42,
+     56
+    ],
+    "BLDC": [
+     56,
+     52,
+     48,
+     56,
+     56,
+     32,
+     42,
+     40,
+     58
+    ]
+   }
+  },
+  "FINAL": {
+   "stations": 9,
+   "workers": 9,
+   "cycle_time": 56.25,
+   "idle_per_cycle": 88.45,
+   "efficiency": 0.8253,
+   "balance_delay": 0.1747,
+   "smoothness": 37.0788,
+   "max_load": 56.0,
+   "output_per_day": 482.1429,
+   "loads": [
+    56.0,
+    52.0,
+    34.0,
+    54.2,
+    46.0,
+    44.8,
+    36.8,
+    39.4,
+    54.6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T10"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T13",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "model_loads": {
+    "Standard": [
+     56,
+     52,
+     28,
+     50,
+     46,
+     42,
+     22,
+     38,
+     52
+    ],
+    "Decorative": [
+     56,
+     52,
+     28,
+     62,
+     46,
+     56,
+     66,
+     42,
+     56
+    ],
+    "BLDC": [
+     56,
+     52,
+     48,
+     56,
+     46,
+     42,
+     42,
+     40,
+     58
+    ]
+   }
+  }
+ },
+ "type2": [
+  {
+   "stations": 6,
+   "cycle_time": 83.8,
+   "output_per_day": 322,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T4"
+    ],
+    [
+     "T3",
+     "T5",
+     "T6"
+    ],
+    [
+     "T7",
+     "T8",
+     "T9"
+    ],
+    [
+     "T10",
+     "T11",
+     "T12",
+     "T14"
+    ],
+    [
+     "T13",
+     "T15",
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 7,
+   "cycle_time": 71.667,
+   "output_per_day": 376,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T1",
+     "T3",
+     "T9"
+    ],
+    [
+     "T2",
+     "T4",
+     "T6"
+    ],
+    [
+     "T5",
+     "T7"
+    ],
+    [
+     "T8",
+     "T11",
+     "T12"
+    ],
+    [
+     "T10",
+     "T13",
+     "T14"
+    ],
+    [
+     "T15",
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 8,
+   "cycle_time": 63.8,
+   "output_per_day": 423,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T5"
+    ],
+    [
+     "T6",
+     "T7"
+    ],
+    [
+     "T8",
+     "T11"
+    ],
+    [
+     "T9",
+     "T10",
+     "T12"
+    ],
+    [
+     "T13",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 9,
+   "cycle_time": 56.0,
+   "output_per_day": 482,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T9",
+     "T10"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T13",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 10,
+   "cycle_time": 54.6,
+   "output_per_day": 494,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T2",
+     "T9"
+    ],
+    [
+     "T1",
+     "T4"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T3",
+     "T6"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T13"
+    ],
+    [
+     "T10",
+     "T14",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 11,
+   "cycle_time": 54.2,
+   "output_per_day": 498,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T2",
+     "T9"
+    ],
+    [
+     "T1",
+     "T4"
+    ],
+    [
+     "T3",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T10",
+     "T14"
+    ],
+    [
+     "T13",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17"
+    ],
+    [
+     "T18"
+    ]
+   ]
+  },
+  {
+   "stations": 12,
+   "cycle_time": 46.0,
+   "output_per_day": 586,
+   "status": "Optimal",
+   "stations_tasks": [
+    [
+     "T2",
+     "T9"
+    ],
+    [
+     "T1",
+     "T4"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T3",
+     "T6"
+    ],
+    [
+     "T7"
+    ],
+    [
+     "T8",
+     "T10"
+    ],
+    [
+     "T11"
+    ],
+    [
+     "T12",
+     "T14"
+    ],
+    [
+     "T13",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17"
+    ],
+    [
+     "T18"
+    ]
+   ]
+  }
+ ],
+ "sequencing": {
+  "mps": {
+   "Standard": 5,
+   "Decorative": 2,
+   "BLDC": 3
+  },
+  "goal_chasing": [
+   "Standard",
+   "BLDC",
+   "Decorative",
+   "Standard",
+   "Standard",
+   "BLDC",
+   "Standard",
+   "Decorative",
+   "BLDC",
+   "Standard"
+  ],
+  "best": [
+   "Standard",
+   "Standard",
+   "Standard",
+   "Standard",
+   "Standard",
+   "Decorative",
+   "BLDC",
+   "Decorative",
+   "BLDC",
+   "BLDC"
+  ],
+  "permutations_checked": 2520,
+  "day_batch": {
+   "utility_s": 1706.2,
+   "per_station_utility": [
+    0.0,
+    0.0,
+    0.0,
+    540.8,
+    0.0,
+    0.0,
+    924.8,
+    0.0,
+    240.8
+   ],
+   "idle_s": 44173.5
+  },
+  "goal_chasing_day": {
+   "utility_s": 0.0,
+   "per_station_utility": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "idle_s": 42456.0
+  },
+  "best_day": {
+   "utility_s": 0.0,
+   "per_station_utility": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "idle_s": 42471.8
+  },
+  "worst_station": 7
+ },
+ "parallel": {
+  "480": {
+   "cycle_time": 56.25,
+   "operators_parallel": 8,
+   "stations_parallel": 6,
+   "doubled": [
+    2,
+    5
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2",
+     "T3"
+    ],
+    [
+     "T4",
+     "T5",
+     "T6",
+     "T9"
+    ],
+    [
+     "T7",
+     "T8"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T10",
+     "T13",
+     "T14",
+     "T15",
+     "T16"
+    ],
+    [
+     "T17",
+     "T18"
+    ]
+   ],
+   "operators_no_parallel": 9,
+   "status": "Optimal"
+  },
+  "560": {
+   "cycle_time": 48.21,
+   "operators_parallel": 10,
+   "stations_parallel": 8,
+   "doubled": [
+    5,
+    8
+   ],
+   "stations_tasks": [
+    [
+     "T2",
+     "T9"
+    ],
+    [
+     "T1",
+     "T4"
+    ],
+    [
+     "T3",
+     "T6"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T7",
+     "T8",
+     "T10",
+     "T14"
+    ],
+    [
+     "T11",
+     "T12"
+    ],
+    [
+     "T13",
+     "T15"
+    ],
+    [
+     "T16",
+     "T17",
+     "T18"
+    ]
+   ],
+   "operators_no_parallel": 12,
+   "status": "Optimal"
+  },
+  "600": {
+   "cycle_time": 45.0,
+   "operators_parallel": 11,
+   "stations_parallel": 9,
+   "doubled": [
+    3,
+    8
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T2"
+    ],
+    [
+     "T3",
+     "T9"
+    ],
+    [
+     "T4",
+     "T5",
+     "T6"
+    ],
+    [
+     "T7"
+    ],
+    [
+     "T8",
+     "T10"
+    ],
+    [
+     "T11"
+    ],
+    [
+     "T12",
+     "T14"
+    ],
+    [
+     "T13",
+     "T15",
+     "T16",
+     "T17"
+    ],
+    [
+     "T18"
+    ]
+   ],
+   "operators_no_parallel": 13,
+   "status": "Optimal"
+  },
+  "640": {
+   "cycle_time": 42.19,
+   "operators_parallel": 12,
+   "stations_parallel": 10,
+   "doubled": [
+    4,
+    6
+   ],
+   "stations_tasks": [
+    [
+     "T1",
+     "T3"
+    ],
+    [
+     "T2",
+     "T4"
+    ],
+    [
+     "T5"
+    ],
+    [
+     "T6",
+     "T7",
+     "T8"
+    ],
+    [
+     "T9"
+    ],
+    [
+     "T10",
+     "T11",
+     "T12",
+     "T14"
+    ],
+    [
+     "T13",
+     "T15"
+    ],
+    [
+     "T16"
+    ],
+    [
+     "T17"
+    ],
+    [
+     "T18"
+    ]
+   ],
+   "operators_no_parallel": 13,
+   "status": "Optimal"
+  }
+ },
+ "sens_demand": [
+  {
+   "demand": 300,
+   "cycle_time": 90.0,
+   "n_min": 5,
+   "rpw": 6,
+   "ip": 6,
+   "ip_parallel": 5,
+   "eff_ip": 0.7737,
+   "eff_par": 0.9284
+  },
+  {
+   "demand": 320,
+   "cycle_time": 84.38,
+   "n_min": 5,
+   "rpw": 6,
+   "ip": 6,
+   "ip_parallel": 6,
+   "eff_ip": 0.8253,
+   "eff_par": 0.8253
+  },
+  {
+   "demand": 340,
+   "cycle_time": 79.41,
+   "n_min": 6,
+   "rpw": 7,
+   "ip": 7,
+   "ip_parallel": 6,
+   "eff_ip": 0.7516,
+   "eff_par": 0.8769
+  },
+  {
+   "demand": 360,
+   "cycle_time": 75.0,
+   "n_min": 6,
+   "rpw": 7,
+   "ip": 7,
+   "ip_parallel": 6,
+   "eff_ip": 0.7958,
+   "eff_par": 0.9284
+  },
+  {
+   "demand": 380,
+   "cycle_time": 71.05,
+   "n_min": 6,
+   "rpw": 8,
+   "ip": 8,
+   "ip_parallel": 7,
+   "eff_ip": 0.735,
+   "eff_par": 0.84
+  },
+  {
+   "demand": 400,
+   "cycle_time": 67.5,
+   "n_min": 7,
+   "rpw": 8,
+   "ip": 8,
+   "ip_parallel": 7,
+   "eff_ip": 0.7737,
+   "eff_par": 0.8842
+  },
+  {
+   "demand": 420,
+   "cycle_time": 64.29,
+   "n_min": 7,
+   "rpw": 9,
+   "ip": 8,
+   "ip_parallel": 8,
+   "eff_ip": 0.8124,
+   "eff_par": 0.8124
+  },
+  {
+   "demand": 440,
+   "cycle_time": 61.36,
+   "n_min": 7,
+   "rpw": 9,
+   "ip": 9,
+   "ip_parallel": 8,
+   "eff_ip": 0.7565,
+   "eff_par": 0.8511
+  },
+  {
+   "demand": 460,
+   "cycle_time": 58.7,
+   "n_min": 8,
+   "rpw": 9,
+   "ip": 9,
+   "ip_parallel": 8,
+   "eff_ip": 0.7909,
+   "eff_par": 0.8898
+  },
+  {
+   "demand": 480,
+   "cycle_time": 56.25,
+   "n_min": 8,
+   "rpw": 10,
+   "ip": 9,
+   "ip_parallel": 8,
+   "eff_ip": 0.8253,
+   "eff_par": 0.9284
+  },
+  {
+   "demand": 500,
+   "cycle_time": 54.0,
+   "n_min": 8,
+   "rpw": 12,
+   "ip": 12,
+   "ip_parallel": 9,
+   "eff_ip": 0.6448,
+   "eff_par": 0.8597
+  },
+  {
+   "demand": 520,
+   "cycle_time": 51.92,
+   "n_min": 9,
+   "rpw": 12,
+   "ip": 12,
+   "ip_parallel": 9,
+   "eff_ip": 0.6705,
+   "eff_par": 0.8941
+  },
+  {
+   "demand": 540,
+   "cycle_time": 50.0,
+   "n_min": 9,
+   "rpw": 12,
+   "ip": 12,
+   "ip_parallel": 9,
+   "eff_ip": 0.6963,
+   "eff_par": 0.9284
+  },
+  {
+   "demand": 560,
+   "cycle_time": 48.21,
+   "n_min": 9,
+   "rpw": 12,
+   "ip": 12,
+   "ip_parallel": 10,
+   "eff_ip": 0.7221,
+   "eff_par": 0.8665
+  },
+  {
+   "demand": 580,
+   "cycle_time": 46.55,
+   "n_min": 9,
+   "rpw": 13,
+   "ip": 12,
+   "ip_parallel": 10,
+   "eff_ip": 0.7479,
+   "eff_par": 0.8975
+  },
+  {
+   "demand": 600,
+   "cycle_time": 45.0,
+   "n_min": 10,
+   "rpw": 14,
+   "ip": 13,
+   "ip_parallel": 11,
+   "eff_ip": 0.7142,
+   "eff_par": 0.844
+  },
+  {
+   "demand": 620,
+   "cycle_time": 43.55,
+   "n_min": 10,
+   "rpw": 14,
+   "ip": 13,
+   "ip_parallel": 11,
+   "eff_ip": 0.738,
+   "eff_par": 0.8722
+  },
+  {
+   "demand": 640,
+   "cycle_time": 42.19,
+   "n_min": 10,
+   "rpw": 14,
+   "ip": 13,
+   "ip_parallel": 12,
+   "eff_ip": 0.7618,
+   "eff_par": 0.8253
+  },
+  {
+   "demand": 660,
+   "cycle_time": 40.91,
+   "n_min": 11,
+   "rpw": 14,
+   "ip": 14,
+   "ip_parallel": 13,
+   "eff_ip": 0.7295,
+   "eff_par": 0.7856
+  }
+ ],
+ "sens_mix": [
+  {
+   "bldc": 0.1,
+   "standard": 0.7,
+   "work": 407.0,
+   "n_min": 8,
+   "ip": 9,
+   "rpw": 10,
+   "eff": 0.804
+  },
+  {
+   "bldc": 0.2,
+   "standard": 0.6,
+   "work": 412.4,
+   "n_min": 8,
+   "ip": 9,
+   "rpw": 10,
+   "eff": 0.8146
+  },
+  {
+   "bldc": 0.3,
+   "standard": 0.5,
+   "work": 417.8,
+   "n_min": 8,
+   "ip": 9,
+   "rpw": 10,
+   "eff": 0.8253
+  },
+  {
+   "bldc": 0.4,
+   "standard": 0.4,
+   "work": 423.2,
+   "n_min": 8,
+   "ip": 9,
+   "rpw": 10,
+   "eff": 0.836
+  },
+  {
+   "bldc": 0.5,
+   "standard": 0.3,
+   "work": 428.6,
+   "n_min": 8,
+   "ip": 9,
+   "rpw": 10,
+   "eff": 0.8466
+  },
+  {
+   "bldc": 0.6,
+   "standard": 0.2,
+   "work": 434.0,
+   "n_min": 8,
+   "ip": 10,
+   "rpw": 11,
+   "eff": 0.7716
+  }
+ ]
+}
